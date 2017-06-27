@@ -18,6 +18,8 @@ import (
 	"fmt"
 	"sort"
 
+	log "github.com/sirupsen/logrus"
+
 	"github.com/projectcalico/felix/iptables"
 )
 
@@ -91,7 +93,7 @@ func (r *DefaultRuleRenderer) DNATsToIptablesChains(dnats map[string]string) []*
 	}}
 }
 
-func (r *DefaultRuleRenderer) SNATsToIptablesChains(snats map[string]string) []*iptables.Chain {
+func (r *DefaultRuleRenderer) SNATsToIptablesChains(snats map[string]string, ipVersion uint8) []*iptables.Chain {
 	// Extract and sort map keys so we can program rules in a determined order.
 	sortedIntIps := make([]string, 0, len(snats))
 	for intIp := range snats {
@@ -102,8 +104,21 @@ func (r *DefaultRuleRenderer) SNATsToIptablesChains(snats map[string]string) []*
 	rules := []iptables.Rule{}
 	for _, intIp := range sortedIntIps {
 		extIp := snats[intIp]
+
+		destMatch := intIp
+		if r.NatSnatDestination == "any" {
+			if ipVersion == 4 {
+				destMatch = "0.0.0.0/0"
+			} else if ipVersion == 6 {
+				destMatch = "::/0"
+			} else {
+				log.WithField("version", ipVersion).Panic("Unknown IP version")
+				return nil
+			}
+		}
+
 		rules = append(rules, iptables.Rule{
-			Match:  iptables.Match().DestNet(intIp).SourceNet(intIp),
+			Match:  iptables.Match().DestNet(destMatch).SourceNet(intIp),
 			Action: iptables.SNATAction{ToAddr: extIp},
 		})
 	}

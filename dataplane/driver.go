@@ -139,6 +139,8 @@ func StartDataplaneDriver(configParams *config.Config,
 
 				NATPortRange:                       configParams.NATPortRange,
 				IptablesNATOutgoingInterfaceFilter: configParams.IptablesNATOutgoingInterfaceFilter,
+
+				NatSnatDestination: configParams.NatSnatDestination,
 			},
 			IPIPMTU:                        configParams.IpInIpMtu,
 			VXLANMTU:                       configParams.VXLANMTU,
