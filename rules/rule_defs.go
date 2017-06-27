@@ -190,7 +190,7 @@ type RuleRenderer interface {
 	NATOutgoingChain(active bool, ipVersion uint8) *iptables.Chain
 
 	DNATsToIptablesChains(dnats map[string]string) []*iptables.Chain
-	SNATsToIptablesChains(snats map[string]string) []*iptables.Chain
+	SNATsToIptablesChains(snats map[string]string, ipVersion uint8) []*iptables.Chain
 }
 
 type DefaultRuleRenderer struct {
@@ -250,6 +250,8 @@ type Config struct {
 
 	NATPortRange                       numorstring.Port
 	IptablesNATOutgoingInterfaceFilter string
+
+	NatSnatDestination string
 }
 
 func (c *Config) validate() {
