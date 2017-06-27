@@ -108,8 +108,9 @@ type Config struct {
 	TyphaReadTimeout    time.Duration `config:"seconds;30"`
 	TyphaWriteTimeout   time.Duration `config:"seconds;10"`
 
-	Ipv6Support    bool `config:"bool;true"`
-	IgnoreLooseRPF bool `config:"bool;false"`
+	Ipv6Support        bool   `config:"bool;true"`
+	IgnoreLooseRPF     bool   `config:"bool;false"`
+	NatSnatDestination string `config:"oneof(private,any);private;non-zero,die-on-fail"`
 
 	RouteRefreshInterval               time.Duration `config:"seconds;90"`
 	IptablesRefreshInterval            time.Duration `config:"seconds;90"`
