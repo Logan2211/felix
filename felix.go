@@ -243,11 +243,15 @@ configRetry:
 		// Short-lived mark bits for local calculations within a chain.
 		markScratch0 := configParams.NextIptablesMark()
 		markScratch1 := configParams.NextIptablesMark()
+		markWorkload := configParams.NextIptablesMark()
+		markSnatSkip := configParams.NextIptablesMark()
 		log.WithFields(log.Fields{
 			"acceptMark":   markAccept,
 			"passMark":     markPass,
 			"scratch0Mark": markScratch0,
 			"scratch1Mark": markScratch1,
+			"workloadMark": markWorkload,
+			"snatSkipMark": markSnatSkip,
 		}).Info("Calculated iptables mark bits")
 		dpConfig := intdataplane.Config{
 			RulesConfig: rules.Config{
@@ -274,6 +278,8 @@ configRetry:
 				IptablesMarkPass:     markPass,
 				IptablesMarkScratch0: markScratch0,
 				IptablesMarkScratch1: markScratch1,
+				IptablesMarkFromWorkload: markWorkload,
+				IptablesMarkSnatSkip:     markSnatSkip,
 
 				IPIPEnabled:       configParams.IpInIpEnabled,
 				IPIPTunnelAddress: configParams.IpInIpTunnelAddr,
