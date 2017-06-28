@@ -205,6 +205,8 @@ type Config struct {
 	IptablesMarkPass     uint32
 	IptablesMarkScratch0 uint32
 	IptablesMarkScratch1 uint32
+	IptablesMarkFromWorkload uint32
+	IptablesMarkSnatSkip     uint32
 
 	OpenStackMetadataIP          net.IP
 	OpenStackMetadataPort        uint16
