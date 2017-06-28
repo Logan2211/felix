@@ -221,6 +221,7 @@ type Config struct {
 	IptablesMarkPass     uint32
 	IptablesMarkScratch0 uint32
 	IptablesMarkScratch1 uint32
+	IptablesMarkSnatSkip uint32
 	IptablesMarkEndpoint uint32
 	// IptablesMarkNonCaliEndpoint is an endpoint mark which is reserved
 	// to mark non-calico (workload or host) endpoint.
