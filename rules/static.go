@@ -654,16 +654,25 @@ func (r *DefaultRuleRenderer) StaticNATPreroutingChains(ipVersion uint8) []*Chai
 	}
 
 	if ipVersion == 4 && r.OpenStackSpecialCasesEnabled && r.OpenStackMetadataIP != nil {
-		rules = append(rules, Rule{
-			Match: Match().
-				Protocol("tcp").
-				DestPorts(80).
-				DestNet("169.254.169.254/32"),
-			Action: DNATAction{
-				DestAddr: r.OpenStackMetadataIP.String(),
-				DestPort: r.OpenStackMetadataPort,
+		rules = append(rules,
+			Rule{
+				Match: Match().
+					Protocol("tcp").
+					DestPorts(80).
+					DestNet("169.254.169.254/32"),
+				Action: SetMarkAction{Mark: r.IptablesMarkSnatSkip},
 			},
-		})
+			Rule{
+				Match: Match().
+				    MarkSingleBitSet(r.IptablesMarkSnatSkip).
+					Protocol("tcp").
+					DestPorts(80).
+					DestNet("169.254.169.254/32"),
+				Action: DNATAction{
+					DestAddr: r.OpenStackMetadataIP.String(),
+					DestPort: r.OpenStackMetadataPort,
+				},
+			})
 	}
 
 	return []*Chain{{
@@ -673,14 +682,25 @@ func (r *DefaultRuleRenderer) StaticNATPreroutingChains(ipVersion uint8) []*Chai
 }
 
 func (r *DefaultRuleRenderer) StaticNATPostroutingChains(ipVersion uint8) []*Chain {
-	rules := []Rule{
-		{
+	var rules []Rule
+
+	if ipVersion == 4 && r.OpenStackSpecialCasesEnabled && r.OpenStackMetadataIP != nil {
+		rules = append(rules,
+			Rule{
+				Match:  Match().MarkSingleBitSet(r.IptablesMarkSnatSkip),
+				Action: ReturnAction{},
+			},
+		)
+	}
+
+	rules = append(rules,
+		Rule{
 			Action: JumpAction{Target: ChainFIPSnat},
 		},
-		{
+		Rule{
 			Action: JumpAction{Target: ChainNATOutgoing},
 		},
-	}
+	)
 
 	var tunnelIfaces []string
 

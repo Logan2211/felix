@@ -58,7 +58,8 @@ func StartDataplaneDriver(configParams *config.Config,
 		// Short-lived mark bits for local calculations within a chain.
 		markScratch0, _ := markBitsManager.NextSingleBitMark()
 		markScratch1, _ := markBitsManager.NextSingleBitMark()
-		if markAccept == 0 || markPass == 0 || markScratch0 == 0 || markScratch1 == 0 {
+		markSnatSkip, _ := markBitsManager.NextSingleBitMark()
+		if markAccept == 0 || markPass == 0 || markScratch0 == 0 || markScratch1 == 0 || markSnatSkip == 0 {
 			log.WithFields(log.Fields{
 				"Name":     "felix-iptables",
 				"MarkMask": configParams.IptablesMarkMask,
@@ -80,6 +81,7 @@ func StartDataplaneDriver(configParams *config.Config,
 			"passMark":            markPass,
 			"scratch0Mark":        markScratch0,
 			"scratch1Mark":        markScratch1,
+			"snatSkipMark":        markSnatSkip,
 			"endpointMark":        markEndpointMark,
 			"endpointMarkNonCali": markEndpointNonCaliEndpoint,
 		}).Info("Calculated iptables mark bits")
@@ -116,6 +118,7 @@ func StartDataplaneDriver(configParams *config.Config,
 				IptablesMarkPass:            markPass,
 				IptablesMarkScratch0:        markScratch0,
 				IptablesMarkScratch1:        markScratch1,
+				IptablesMarkSnatSkip:        markSnatSkip,
 				IptablesMarkEndpoint:        markEndpointMark,
 				IptablesMarkNonCaliEndpoint: markEndpointNonCaliEndpoint,
 
