@@ -1,0 +1,20 @@
+language: go
+services:
+  - docker
+before_deploy:
+  - wget -O /opt/upx-3.94-amd64_linux.tar.xz https://github.com/upx/upx/releases/download/v3.94/upx-3.94-amd64_linux.tar.xz
+  - tar xf /opt/upx-3.94-amd64_linux.tar.xz -C /opt
+  - make update-tools
+  - make bin/calico-felix
+notifications:
+  email: false
+deploy:
+  skip_cleanup: true
+  provider: releases
+  api_key:
+    secure: Y4Kyp0/CH0gpF2gNnp2Zd30MEepJh/2vOYofmtRwxFbR+VtRf//Yl27dMBGXR52YeZJo32rg3kS5s1jnQ1ifeAJpZXIN/j0Vyvp14lYZbrqyEDHZ6rg5fz/6YM/sT3CYTgV4Ynwed12BU4BwwYKYoMELnka/f01Xxs1RZThBoEV0tSpxPxOa/a4YtbDkxRrWiddQIcrIFLR9w7femTb6K0SBwZLrIyd3S3RfyZLI+z83pVt7I8uttDfswFIzaPnOQo7WgUtCD5acYhAk3J/deP/c/fQxlZyB5nXSTE55UxlBpHbbb0VqK9kuMiT4FQVB9AJArRPJWHGK2Yp6iClH1dr0fsare5x3q4EcStFmuSDE0NHVYGz5KY4oDsMOJbKnEa6KnyPcIK4yKziGSI9v+EQxMegAYkTNQ/poCvL2mufCOCdrwoJJ3ZhAfr4V/qMp+JalVGz7D9iGWI4U7OsUklgN1reKjiVfuQBPtTpw/+UmVs3VsNyst2DvxaOMOyWI3Z9mxcOnt8GVZ6THoiIK1Vyb+uFg3x2h/YTNnWEJ6aBsx90MCzCkSGTX8/Z7P1KkPgqadRg37pfb00V10gCZ/17drng4/Zm/Wbt5R9bsEEGlrZf0OTrX2zYjbLdkmkcZZUL21x76aug2dxvEtsYEZxCAMYN/0kmeDFfA11l4cQk=
+  file:
+    - "bin/calico-felix"
+  on:
+    repo: Logan2211/felix
+    branch: integration
