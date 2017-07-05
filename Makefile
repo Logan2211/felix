@@ -313,6 +313,11 @@ LDFLAGS:=-ldflags "\
         -X github.com/projectcalico/felix/buildinfo.BuildDate=$(DATE) \
         -X github.com/projectcalico/felix/buildinfo.GitRevision=$(GIT_COMMIT) \
         -B 0x$(BUILD_ID)"
+LDFLAGS_NODBG:=-ldflags "\
+        -X github.com/projectcalico/felix/buildinfo.GitVersion=$(GIT_DESCRIPTION) \
+        -X github.com/projectcalico/felix/buildinfo.BuildDate=$(DATE) \
+        -X github.com/projectcalico/felix/buildinfo.GitRevision=$(GIT_COMMIT) \
+        -B 0x$(BUILD_ID) -s -w"
 
 bin/calico-felix: $(FELIX_GO_FILES) vendor/.up-to-date
 	@echo Building felix...
@@ -322,6 +327,15 @@ bin/calico-felix: $(FELIX_GO_FILES) vendor/.up-to-date
 		( ldd bin/calico-felix 2>&1 | grep -q -e "Not a valid dynamic program" \
 		-e "not a dynamic executable" || \
 		( echo "Error: bin/calico-felix was not statically linked"; false ) )'
+
+bin/calico-felix-nodbg: $(FELIX_GO_FILES) vendor/.up-to-date
+	@echo Building felix-nodbg...
+	mkdir -p bin
+	$(DOCKER_GO_BUILD) \
+	   sh -c 'go build -v -i -o $@ -v $(LDFLAGS_NODBG) "github.com/projectcalico/felix" && \
+		( ldd bin/calico-felix-nodbg 2>&1 | grep -q -e "Not a valid dynamic program" \
+		-e "not a dynamic executable" || \
+		( echo "Error: bin/calico-felix-nodbg was not statically linked"; false ) )'
 
 bin/iptables-locker: $(FELIX_GO_FILES) vendor/.up-to-date
 	@echo Building iptables-locker...
