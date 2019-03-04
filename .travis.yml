@@ -2,13 +2,13 @@ language: go
 services:
   - docker
 before_deploy:
-  - wget -O /opt/upx-3.94-amd64_linux.tar.xz https://github.com/upx/upx/releases/download/v3.94/upx-3.94-amd64_linux.tar.xz
-  - tar xf /opt/upx-3.94-amd64_linux.tar.xz -C /opt
+  - wget -O /opt/upx-3.95-amd64_linux.tar.xz https://github.com/upx/upx/releases/download/v3.95/upx-3.95-amd64_linux.tar.xz
+  - tar xf /opt/upx-3.95-amd64_linux.tar.xz -C /opt
   - make update-tools
   - make bin/calico-felix
   - make bin/calico-felix-nodbg
-  - /opt/upx-3.94-amd64_linux/upx bin/calico-felix -o bin/calico-felix-upx
-  - /opt/upx-3.94-amd64_linux/upx bin/calico-felix-nodbg -o bin/calico-felix-nodbg-upx
+  - /opt/upx-3.95-amd64_linux/upx bin/calico-felix -o bin/calico-felix-upx
+  - /opt/upx-3.95-amd64_linux/upx bin/calico-felix-nodbg -o bin/calico-felix-nodbg-upx
 notifications:
   email: false
 deploy:
